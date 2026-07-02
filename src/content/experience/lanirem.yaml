@@ -1,0 +1,9 @@
+org: "Laboratorio Nacional de Imagen por Resonancia Magnética (LANIREM)"
+role: "Master's Student Researcher"
+location: "Querétaro, Qro, México"
+dateStart: "Jul 2019"
+dateEnd: "Jan 2020"
+category: research
+bullets:
+  - "Continued research at the new location of the lab."
+  - "Implemented a Machine Learning pipeline classifying cocaine-dependence from global topology metrics of fMRI (graph-theory analysis)."

@@ -1,0 +1,85 @@
+---
+import Base from "../layouts/Base.astro";
+import { profile } from "../data/profile";
+import { getCollection } from "astro:content";
+
+const pubs = await getCollection("publications");
+const count = (...types: string[]) =>
+  pubs.filter((p) => types.includes(p.data.type)).length;
+const tally = [
+  [count("article", "chapter"), "articles & chapters"],
+  [count("preprint"), "preprints"],
+  [count("conference"), "conference publications"],
+  [count("poster"), "posters"],
+  [count("talk"), "talks"],
+].filter(([n]) => (n as number) > 0);
+---
+<Base title="CV" description="Curriculum vitae — download the full record as a PDF.">
+  <section class="page-head">
+    <div class="divider">
+      <span class="eyebrow">Curriculum Vitae</span>
+      <h1 class="divider__title">CV</h1>
+      <p class="divider__subtitle">
+        The complete record: positions, publications, presentations,
+        honours, and service.
+      </p>
+    </div>
+  </section>
+
+  <p class="cv-download-wrap">
+    <a class="cv-download" href="/cv.pdf" download>
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path>
+      </svg>
+      Download PDF
+    </a>
+    <span class="cv-download__meta">updated {profile.updated}</span>
+  </p>
+
+  <p class="cv-tally">
+    {tally.map(([n, label], i) => (
+      <>{i > 0 && " · "}{`${n} ${label}`}</>
+    ))}
+  </p>
+
+  <footer class="footer">
+    Questions? <a href={`mailto:${profile.info.email}`}>{profile.info.email}</a>
+  </footer>
+</Base>
+
+<style>
+  .page-head { margin-bottom: var(--space-6); }
+  .cv-download-wrap {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    margin: 0 0 var(--space-4) 0;
+  }
+  .cv-download {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55em;
+    padding: 0.7em 1.3em;
+    border: 1px solid var(--color-accent);
+    color: var(--color-accent);
+    text-decoration: none;
+    font-weight: var(--weight-semibold);
+    transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out);
+  }
+  .cv-download:visited { color: var(--color-accent); }
+  .cv-download:hover { background: var(--color-accent); color: var(--color-bg); }
+  .cv-download svg { display: block; }
+  .cv-download__meta {
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+    letter-spacing: var(--tracking-citation);
+    text-transform: uppercase;
+  }
+  .cv-tally {
+    margin: 0 0 var(--space-8) 0;
+    font-size: var(--text-sm);
+    color: var(--color-muted);
+  }
+</style>

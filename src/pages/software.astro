@@ -1,0 +1,62 @@
+---
+import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+import { md } from "../lib/md";
+
+const all = await getCollection("software");
+const major = all
+  .filter((s) => s.data.tier === "major")
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
+const group = all.filter((s) => s.data.tier === "group");
+---
+<Base title="Software" description="Open-source research software: Qrater and the HVR pipeline.">
+  <section class="page-head">
+    <div class="divider">
+      <span class="eyebrow">Software</span>
+      <h1 class="divider__title">Open source</h1>
+      <p class="divider__subtitle">
+        Open-source research tools, with their code and releases.
+      </p>
+    </div>
+  </section>
+
+  <div class="doc">
+    {major.map((s) => {
+      const links: { label: string; url: string }[] = [];
+      if (s.data.links?.github) links.push({ label: "GitHub", url: s.data.links.github });
+      if (s.data.links?.docker) links.push({ label: "Docker Hub", url: s.data.links.docker });
+      if (s.data.links?.paper)  links.push({ label: "Paper",      url: s.data.links.paper });
+      return (
+        <>
+          <h2 class="doc__label">{s.data.name}</h2>
+          <div class="doc__body tool">
+            {s.data.tagline && <p class="tool__tagline">{s.data.tagline}</p>}
+            <ul>{s.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
+            {links.length > 0 && (
+              <p class="tool__links meta">
+                {links.map((link, i) => (
+                  <>{i > 0 && " · "}<a href={link.url}>{link.label}</a></>
+                ))}
+              </p>
+            )}
+          </div>
+        </>
+      );
+    })}
+
+    {group.length > 0 && (
+      <>
+        <h2 class="doc__label">Hackathons</h2>
+        <div class="doc__body tool">
+          {group.map((s) => (
+            <ul>{s.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
+          ))}
+        </div>
+      </>
+    )}
+  </div>
+
+  <footer class="footer">
+    Source and releases on <a href="https://github.com/soffiafdz">GitHub</a>.
+  </footer>
+</Base>

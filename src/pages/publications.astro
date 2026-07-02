@@ -1,0 +1,88 @@
+---
+import Base from "../layouts/Base.astro";
+import { getCollection } from "astro:content";
+
+const all = await getCollection("publications");
+
+// Month-aware reverse-chronological sort: "Jul 2025" → 2025·12+7.
+// Entries with no month (e.g. a year-only TV interview) sort after the
+// dated entries of the same year, matching the CV.
+const MONTHS: Record<string, number> = {
+  jan: 1, feb: 2, mar: 3, apr: 4, may: 5, jun: 6,
+  jul: 7, aug: 8, sep: 9, oct: 10, nov: 11, dec: 12,
+};
+const dateKey = (p: typeof all[number]) => {
+  const m = MONTHS[(p.data.date.match(/[A-Za-z]{3}/) ?? [""])[0].toLowerCase()] ?? 0;
+  return p.data.year * 12 + m;
+};
+const byYear = (a: typeof all[number], b: typeof all[number]) =>
+  dateKey(b) - dateKey(a);
+
+// Preprints lead: they're the most recent and time-sensitive outputs
+// (they migrate into "Articles" once published), so recency beats the
+// older peer-reviewed-first prestige ordering — and it matches the home
+// page, which sorts articles + preprints together by year.
+const groups = [
+  { label: "Preprints", types: ["preprint"] },
+  { label: "Articles & book chapter", types: ["article", "chapter"] },
+  { label: "Conference publications", types: ["conference"] },
+  { label: "Posters", types: ["poster"] },
+  { label: "Talks", types: ["talk"] },
+].map((g) => ({
+  label: g.label,
+  items: all.filter((p) => g.types.includes(p.data.type)).sort(byYear),
+}));
+---
+<Base title="Publications" description="Peer-reviewed articles, preprints, conference publications, posters, and talks.">
+  <section class="page-head">
+    <div class="divider">
+      <span class="eyebrow">Research</span>
+      <h1 class="divider__title">Publications</h1>
+    </div>
+  </section>
+
+  <div class="doc">
+    {groups.map((group) => group.items.length > 0 && (
+      <>
+        <h2 class="doc__label">{group.label}</h2>
+        <div class="doc__body">
+          {group.items.map((pub) => {
+            const metaContent = (
+              <>
+                {pub.data.talkType && <span class="item__kind">{pub.data.talkType} · </span>}
+                {pub.data.authors && <>{pub.data.authors} · </>}
+                <em>{pub.data.venue}</em>
+                {pub.data.venueDetail && <> {pub.data.venueDetail}</>}
+                {pub.data.location && <> · {pub.data.location}</>}
+              </>
+            );
+            return (
+              <div class="item">
+                <span class="item__year">{pub.data.year}</span>
+                <div class="item__body">
+                  <span class="item__title">
+                    {pub.data.title}{/[.?!]$/.test(pub.data.title) ? "" : "."}
+                    {pub.data.englishTitle && (
+                      <span class="item__title-translation"> ({pub.data.englishTitle})</span>
+                    )}
+                  </span>
+                  {pub.data.doi ? (
+                    <a class="item__meta" href={`https://doi.org/${pub.data.doi}`}>{metaContent}</a>
+                  ) : pub.data.url ? (
+                    <a class="item__meta" href={pub.data.url}>{metaContent}</a>
+                  ) : (
+                    <span class="item__meta">{metaContent}</span>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </>
+    ))}
+  </div>
+
+  <footer class="footer">
+    DOIs link to the version of record.
+  </footer>
+</Base>

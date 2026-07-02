@@ -1,0 +1,89 @@
+:root {
+  /* Source Sans 3 for everything; serif var kept as a fallback (unused). */
+  --font-sans: "Source Sans 3 Variable", "Source Sans 3", "Source Sans Pro",
+               "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-serif: "Iowan Old Style", "Charter", "Georgia", serif;
+  --font-mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Reading sizes are fixed (fluid scales blow up body text on Retina
+     laptops); only the display titles scale, and modestly. */
+  --text-xs:    0.8125rem;   /* 13px — eyebrow, citation, year gutter */
+  --text-sm:    0.9375rem;   /* 15px — meta, nav, footer */
+  --text-base:  1.0625rem;   /* 17px — body */
+  --text-md:    1.1875rem;   /* 19px — lead / intro / subtitle */
+  --text-lg:    1.375rem;    /* 22px */
+  --text-xl:    clamp(1.875rem, 1.25rem + 1.6vw, 2.375rem); /* 30 → 38 — interior h1 */
+  --text-2xl:   clamp(2.25rem, 1.5rem  + 2vw,   3rem);      /* 36 → 48 — hero name */
+  --text-3xl:   clamp(2.75rem, 1.7rem  + 2.6vw, 3.75rem);   /* 44 → 60 — reserve */
+
+  /* Line heights */
+  --lh-tight: 1.05;
+  --lh-snug:  1.2;
+  --lh-body:  1.55;
+  --lh-loose: 1.7;
+
+  /* Weights */
+  --weight-regular:  400;
+  --weight-medium:   500;
+  --weight-semibold: 600;
+  --weight-bold:     700;
+  --weight-black:    800;
+
+  /* Letter-spacing */
+  --tracking-eyebrow: 0.22em;
+  --tracking-citation: 0.14em;
+  --tracking-tight: -0.02em;
+
+  /* Spacing — fluid for the large end, fixed for the small end. */
+  --space-1:  0.5rem;
+  --space-2:  0.75rem;
+  --space-3:  1rem;
+  --space-4:  clamp(1.25rem, 1rem + 0.5vw,  1.75rem);
+  --space-5:  clamp(1.5rem,  1rem + 1vw,    2.5rem);
+  --space-6:  clamp(2rem,    1rem + 2vw,    3.75rem);
+  --space-7:  clamp(2.5rem,  1rem + 3vw,    4rem);
+  --space-8:  clamp(3.25rem, 1rem + 4vw,    5rem);
+  --space-9:  clamp(4.5rem,  2rem + 5vw,    6.5rem);
+
+  /* Wine accent, warm neutrals. */
+  --color-bg:     #ffffff;
+  --color-fg:     #1a1a1a;
+  --color-muted:  #6b6b6b;
+  --color-subtle: #a8a8a8;
+  --color-rule:   #d0d0d0;
+  --color-accent: #7c1d2c;
+  --color-accent-hover: #5a1420;
+  --color-accent-visited: #5a3035;
+
+  /* A text-forward site reads better in a composed document frame. */
+  --page-width:  64rem;    /* 1024px — nav + document grid frame, sized so
+                              the label+body grid fills it without dead space */
+  --prose-width: 42rem;    /* 672px reading column for bio prose */
+  --rule-width:  4px;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+:root[data-theme="dark"] {
+  --color-bg:     #0f0f10;
+  --color-fg:     #f5f3f0;
+  --color-muted:  #b0aaa3;
+  --color-subtle: #8a8580;
+  --color-rule:   #4a4540;
+  --color-accent: #d4717f;
+  --color-accent-hover: #e89099;
+  --color-accent-visited: #b07380;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-bg:     #0f0f10;
+    --color-fg:     #f5f3f0;
+    --color-muted:  #b0aaa3;
+    --color-subtle: #8a8580;
+    --color-rule:   #4a4540;
+    --color-accent: #d4717f;
+    --color-accent-hover: #e89099;
+    --color-accent-visited: #b07380;
+  }
+}

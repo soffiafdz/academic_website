@@ -1,0 +1,9 @@
+org: "Neuroimaging & Surgical Technologies (NIST) Lab"
+role: "Doctoral Researcher"
+location: "Montréal, QC, Canada"
+dateStart: "Aug 2020"
+dateEnd: "Present"
+category: research
+bullets:
+  - "Developing and improving MRI tools to improve prediction of progression to Alzheimer's disease."
+  - "Developed a Quality Control web application that significantly improved the efficiency of the lab's QC processes."

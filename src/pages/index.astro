@@ -1,0 +1,115 @@
+---
+import Base from "../layouts/Base.astro";
+import { profile } from "../data/profile";
+import { getCollection } from "astro:content";
+
+const publications = (await getCollection("publications"))
+  .filter((p) => p.data.type === "article" || p.data.type === "preprint")
+  .sort((a, b) => b.data.year - a.data.year)
+  .slice(0, 4);
+
+const software = (await getCollection("software"))
+  .filter((s) => s.data.tier === "major")
+  .sort((a, b) => a.data.name.localeCompare(b.data.name));
+---
+<Base description={`${profile.firstName} ${profile.lastName} — ${profile.tagline}`}>
+  <section class="hero page-head">
+    <div class="divider">
+      <span class="eyebrow">{profile.tagline}</span>
+      <h1 class="divider__title">{profile.firstName} {profile.lastName}</h1>
+      <p class="divider__subtitle">
+        MRI biomarkers · Alzheimer's disease · Neurodegeneration
+      </p>
+      <p class="hero__contact">
+        <a href={`mailto:${profile.info.email}`}>{profile.info.email}</a>
+        {" · "}
+        <a href={`https://orcid.org/${profile.info.orcid}`}>ORCID</a>
+        {" · "}
+        <a href={`https://github.com/${profile.info.github}`}>GitHub</a>
+        {" · "}
+        {profile.info.location}
+      </p>
+    </div>
+  </section>
+
+  <section class="prose intro">
+    <p>
+      I work on MRI biomarkers of Alzheimer's disease at the Montreal
+      Neurological Institute. My doctoral research developed the
+      hippocampal-to-ventricle ratio (HVR), a measure of medial-temporal
+      atrophy that does not depend on head size, and tested it against
+      age and cognition across Alzheimer's and Parkinson's cohorts. I
+      also built Qrater, an open-source tool for quality control of large
+      MRI datasets, now used in several labs.
+    </p>
+    <p>
+      I trained in psychology and then neurobiology in Mexico before
+      moving to Montréal in 2020.
+    </p>
+  </section>
+
+  <div class="doc">
+    <h2 class="doc__label">Selected publications</h2>
+    <div class="doc__body">
+      {publications.map((pub) => {
+        const metaContent = (
+          <>
+            {pub.data.authors && <>{pub.data.authors} · </>}
+            <em>{pub.data.venue}</em>
+            {pub.data.venueDetail && <> {pub.data.venueDetail}</>}
+          </>
+        );
+        return (
+          <div class="item">
+            <span class="item__year">{pub.data.year}</span>
+            <div class="item__body">
+              <span class="item__title">{pub.data.title}{/[.?!]$/.test(pub.data.title) ? "" : "."}</span>
+              {pub.data.doi ? (
+                <a class="item__meta" href={`https://doi.org/${pub.data.doi}`}>{metaContent}</a>
+              ) : (
+                <span class="item__meta">{metaContent}</span>
+              )}
+            </div>
+          </div>
+        );
+      })}
+      <p class="more"><a href="/publications">All publications →</a></p>
+    </div>
+
+    <h2 class="doc__label">Software</h2>
+    <div class="doc__body">
+      {software.map((s) => {
+        const links: { label: string; url: string }[] = [];
+        if (s.data.links?.github) links.push({ label: "GitHub", url: s.data.links.github });
+        if (s.data.links?.paper)  links.push({ label: "Paper",  url: s.data.links.paper });
+        return (
+          <div class="item">
+            <span class="item__year">{(s.data.period ?? "").split(/[–-]/)[0].trim()}</span>
+            <div class="item__body">
+              <span class="item__title">{s.data.name}</span>
+              {s.data.tagline && <span class="item__meta">{s.data.tagline}</span>}
+              {links.length > 0 && (
+                <span class="item__meta">
+                  {links.map((link, i) => (
+                    <>{i > 0 && " · "}<a href={link.url}>{link.label}</a></>
+                  ))}
+                </span>
+              )}
+            </div>
+          </div>
+        );
+      })}
+      <p class="more"><a href="/software">More on software →</a></p>
+    </div>
+  </div>
+
+  <footer class="footer">
+    Updated {profile.updated}.
+  </footer>
+</Base>
+
+<style>
+  .intro { margin-bottom: var(--space-8); }
+  .intro p { font-size: var(--text-md); }
+  .more { margin-top: var(--space-4); font-size: var(--text-sm); }
+</style>

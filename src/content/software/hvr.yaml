@@ -1,0 +1,12 @@
+name: "HVR — Hippocampal-to-Ventricle Ratio"
+tagline: "Head-size-independent neurodegeneration biomarker"
+period: "2022 – Present"
+links:
+  github: "https://github.com/soffiafdz/hvr_validation"
+  docker: "https://hub.docker.com/repository/docker/soffiafdz/hvr_cnn"
+  paper: "https://doi.org/10.1002/hbm.70265"
+bullets:
+  - "Deep-learning pipeline that segments hippocampus and ventricles from T1 MRI to compute a head-size-independent neurodegeneration biomarker."
+  - "Outperforms hippocampal volume alone for tracking cognitive decline in Alzheimer's and Parkinson's cohorts."
+  - "Published in *Human Brain Mapping* (2025)."
+tier: major

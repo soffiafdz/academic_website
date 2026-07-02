@@ -1,0 +1,19 @@
+---
+import Base from "../layouts/Base.astro";
+---
+<Base title="Page not found" description="Page not found.">
+  <section class="page-head">
+    <div class="divider">
+      <span class="eyebrow">404</span>
+      <h1 class="divider__title">Page not found</h1>
+      <p class="divider__subtitle">This page doesn't exist.</p>
+    </div>
+  </section>
+
+  <p class="back"><a href="/">Back to home</a></p>
+</Base>
+
+<style>
+  .page-head { margin-bottom: var(--space-6); }
+  .back { margin: 0 0 var(--space-8) 0; }
+</style>

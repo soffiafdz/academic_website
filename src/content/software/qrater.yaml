@@ -1,0 +1,13 @@
+name: "Qrater"
+tagline: "Collaborative MRI quality control for research teams"
+role: "Lead developer"
+period: "2021 – Present"
+links:
+  github: "https://github.com/soffiafdz/Qrater"
+  docker: "https://hub.docker.com/repository/docker/soffiafdz/qrater"
+  paper: "https://doi.org/10.52294/001c.118616"
+bullets:
+  - "Collaborative web tool for MRI quality control: shared dashboard, rater assignments, scan history — built for teams that have outgrown spreadsheet-based QC."
+  - "Cuts per-scan QC time 2–10× compared to legacy workflows."
+  - "Published in *Aperture Neuro* (2024)."
+tier: major

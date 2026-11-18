@@ -8,6 +8,6 @@ links:
   paper: "https://doi.org/10.52294/001c.118616"
 bullets:
   - "Collaborative web tool for MRI quality control: shared dashboard, rater assignments, scan history."
-  - "In the paper's evaluation, registration QC was 2–3× faster than a conventional viewer, and segmentation checks up to 20× faster."
+  - "In the paper's evaluation, registration QC was 2–3× faster than a conventional viewer, and segmentation checks up to 30× faster."
   - "Published in *Aperture Neuro* (2024)."
 tier: major

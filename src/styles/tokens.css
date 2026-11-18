@@ -49,7 +49,7 @@
   --color-accent-visited: #5a3035;
 
   --page-width:  64rem;
-  --prose-width: 38rem;      /* ~72 characters at 17px */
+  --prose-width: 33rem;      /* ~72 characters of Source Sans at 17px */
   --rule-width:  4px;
 
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);

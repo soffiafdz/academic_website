@@ -6,9 +6,10 @@ interface Props {
   title?: string;
   description?: string;
   jsonLd?: Record<string, unknown>;
+  noindex?: boolean;
 }
 
-const { title, description, jsonLd } = Astro.props;
+const { title, description, jsonLd, noindex = false } = Astro.props;
 const fullName = `${profile.firstName} ${profile.lastName}`;
 const pageTitle = title ? `${title} — ${fullName}` : fullName;
 const metaDescription = description ?? profile.description;
@@ -31,7 +32,7 @@ const navItems = [
     <title>{pageTitle}</title>
     <meta name="description" content={metaDescription} />
     <meta name="author" content={fullName} />
-    <link rel="canonical" href={canonicalUrl} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={canonicalUrl} />}
     <meta property="og:site_name" content={fullName} />
     <meta property="og:type" content="website" />
     <meta property="og:title" content={pageTitle} />

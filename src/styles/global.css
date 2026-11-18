@@ -34,6 +34,7 @@ h1, h2, h3, h4 {
   line-height: var(--lh-tight);
   letter-spacing: var(--tracking-tight);
   color: var(--color-fg);
+  overflow-wrap: break-word;
 }
 
 p { margin: 0 0 var(--space-3) 0; }
@@ -114,7 +115,8 @@ a:hover {
 
 .nav__links {
   display: flex;
-  gap: var(--space-4);
+  flex-wrap: wrap;
+  gap: 0 var(--space-4);
   list-style: none;
   margin: 0;
   padding: 0;
@@ -132,7 +134,12 @@ a:hover {
   text-decoration: none;
 }
 .nav__links a:hover { color: var(--color-fg); }
-.nav__links a[aria-current="page"] { color: var(--color-accent); }
+.nav__links a[aria-current="page"] {
+  color: var(--color-accent);
+  text-decoration: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: 0.5em;
+}
 
 .nav__toggle {
   display: inline-flex; align-items: center; justify-content: center;
@@ -164,6 +171,10 @@ a:hover {
   .nav__brand  { grid-area: brand; }
   .nav__toggle { grid-area: toggle; }
   .nav__links  { grid-area: links; }
+  .nav__links a,
+  .nav__links a:visited { padding: 0.75rem 0.25rem; margin: -0.25rem -0.25rem; }
+  .nav__toggle { position: relative; }
+  .nav__toggle::after { content: ""; position: absolute; inset: -0.25rem; }
 }
 
 /* ====== Page header ====== */
@@ -260,7 +271,7 @@ a:hover {
   font-variant-numeric: tabular-nums;
   white-space: nowrap;
 }
-.item__body { min-width: 0; }
+.item__body { min-width: 0; overflow-wrap: break-word; }
 .item__title {
   display: block;
   font-size: var(--text-base);
@@ -281,6 +292,7 @@ a:hover {
 }
 .item__meta {
   display: block;
+  overflow-wrap: anywhere;
   margin: 0.2rem 0 0 0;
   font-size: var(--text-sm);
   line-height: var(--lh-list);
@@ -300,7 +312,7 @@ a.item__link,
 a.item__link:visited {
   color: inherit;
   text-underline-offset: 0.2em;
-  text-decoration-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 70%, transparent);
 }
 a.item__link:hover { color: var(--color-accent); text-decoration-color: var(--color-accent); }
 
@@ -325,7 +337,7 @@ a.item__link:hover { color: var(--color-accent); text-decoration-color: var(--co
 .toc a,
 .toc a:visited {
   color: var(--color-fg);
-  text-decoration-color: color-mix(in srgb, var(--color-accent) 45%, transparent);
+  text-decoration-color: color-mix(in srgb, var(--color-accent) 70%, transparent);
 }
 .toc a:hover { color: var(--color-accent); }
 .toc__n {

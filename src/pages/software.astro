@@ -1,7 +1,9 @@
 ---
 import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
 import { getCollection } from "astro:content";
 import { md } from "../lib/md";
+import { firstYear } from "../lib/dates";
 
 const all = await getCollection("software");
 const major = all
@@ -9,54 +11,60 @@ const major = all
   .sort((a, b) => a.data.name.localeCompare(b.data.name));
 const group = all.filter((s) => s.data.tier === "group");
 ---
-<Base title="Software" description="Open-source research software: Qrater and the HVR pipeline.">
-  <section class="page-head">
-    <div class="divider">
-      <span class="eyebrow">Software</span>
-      <h1 class="divider__title">Open source</h1>
-      <p class="divider__subtitle">
-        Open-source research tools, with their code and releases.
-      </p>
-    </div>
-  </section>
+<Base
+  title="Software"
+  description="Open-source research software by Sofía Fernández Lozano: the HVR pipeline and Qrater, a collaborative MRI quality-control application."
+>
+  <PageHeader title="Software" lede="Open-source research tools, with their code and releases." />
 
   <div class="doc">
-    {major.map((s) => {
-      const links: { label: string; url: string }[] = [];
-      if (s.data.links?.github) links.push({ label: "GitHub", url: s.data.links.github });
-      if (s.data.links?.docker) links.push({ label: "Docker Hub", url: s.data.links.docker });
-      if (s.data.links?.paper)  links.push({ label: "Paper",      url: s.data.links.paper });
-      return (
-        <>
-          <h2 class="doc__label">{s.data.name}</h2>
-          <div class="doc__body tool">
-            {s.data.tagline && <p class="tool__tagline">{s.data.tagline}</p>}
-            <ul>{s.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
-            {links.length > 0 && (
-              <p class="tool__links meta">
-                {links.map((link, i) => (
-                  <>{i > 0 && " · "}<a href={link.url}>{link.label}</a></>
-                ))}
-              </p>
-            )}
-          </div>
-        </>
-      );
-    })}
+    <h2 class="doc__label">Research tools</h2>
+    <div class="doc__body">
+      {major.map((s) => {
+        const links: { label: string; url: string }[] = [];
+        if (s.data.links?.github) links.push({ label: "GitHub", url: s.data.links.github });
+        if (s.data.links?.docker) links.push({ label: "Docker Hub", url: s.data.links.docker });
+        if (s.data.links?.paper) links.push({ label: "Paper", url: s.data.links.paper });
+        const meta = [s.data.tagline, s.data.role].filter(Boolean).join(" · ");
+        return (
+          <article class="item" id={s.id}>
+            <span class="item__year">{firstYear(s.data.period)}–</span>
+            <div class="item__body">
+              <h3 class="item__title item__title--lg">{s.data.name}</h3>
+              {meta && <p class="item__meta">{meta}</p>}
+              <ul>{s.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
+              {links.length > 0 && (
+                <p class="item__links">
+                  {links.map((link, i) => <>{i > 0 && " · "}<a href={link.url}>{link.label}</a></>)}
+                </p>
+              )}
+            </div>
+          </article>
+        );
+      })}
+    </div>
 
     {group.length > 0 && (
       <>
         <h2 class="doc__label">Hackathons</h2>
-        <div class="doc__body tool">
+        <div class="doc__body">
           {group.map((s) => (
-            <ul>{s.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
+            <div class="item">
+              <span class="item__year">{s.data.period}</span>
+              <div class="item__body">
+                <ul class="first">{s.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
+              </div>
+            </div>
           ))}
         </div>
       </>
     )}
   </div>
-
-  <footer class="footer">
-    Source and releases on <a href="https://github.com/soffiafdz">GitHub</a>.
-  </footer>
 </Base>
+
+<style>
+  article { scroll-margin-top: var(--space-5); }
+  article + article { margin-top: var(--space-6); }
+  /* The hackathon list is the entry itself; no gap above it. */
+  .first { margin-top: 0; font-size: var(--text-base); }
+</style>

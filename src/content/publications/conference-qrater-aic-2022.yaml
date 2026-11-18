@@ -2,7 +2,8 @@ type: conference
 title: "Qrater: collaborative imaging quality control tool"
 authors: "Fernandez-Lozano, S., et al."
 venue: "Alzheimer's & Dementia"
-venueDetail: "18:e065184 — Alzheimer's Imaging Consortium"
+venueDetail: "18:e065184"
+meeting: "Alzheimer's Imaging Consortium"
 location: "San Diego, CA, USA"
 date: "Jul 2022"
 year: 2022

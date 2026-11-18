@@ -1,11 +1,40 @@
 ---
 import Base from "../layouts/Base.astro";
+import PageHeader from "../components/PageHeader.astro";
 import { profile } from "../data/profile";
 import { getCollection } from "astro:content";
+import { years, stamp, lastYear } from "../lib/dates";
+import { md } from "../lib/md";
+
+const experience = (await getCollection("experience")).sort(
+  (a, b) =>
+    stamp(b.data.dateEnd) - stamp(a.data.dateEnd) ||
+    stamp(b.data.dateStart) - stamp(a.data.dateStart)
+);
+const positions = [
+  { label: "Research", items: experience.filter((e) => e.data.category === "research") },
+  { label: "Clinical", items: experience.filter((e) => e.data.category === "clinical") },
+  { label: "Community & advocacy", items: experience.filter((e) => e.data.category === "volunteering") },
+].filter((g) => g.items.length > 0);
+
+const education = (await getCollection("education")).sort(
+  (a, b) => lastYear(b.data.year) - lastYear(a.data.year)
+);
+
+const teaching = (await getCollection("teaching")).sort(
+  (a, b) => lastYear(b.data.period) - lastYear(a.data.period)
+);
+
+const honours = (await getCollection("honours")).sort(
+  (a, b) => (a.data.order ?? 99) - (b.data.order ?? 99) || lastYear(b.data.year) - lastYear(a.data.year)
+);
+const honourGroups = [
+  { label: "Fellowships & awards", items: honours.filter((h) => h.data.tier === "fellowship") },
+  { label: "Recognitions", items: honours.filter((h) => h.data.tier === "recognition") },
+].filter((g) => g.items.length > 0);
 
 const pubs = await getCollection("publications");
-const count = (...types: string[]) =>
-  pubs.filter((p) => types.includes(p.data.type)).length;
+const count = (...types: string[]) => pubs.filter((p) => types.includes(p.data.type)).length;
 const tally = [
   [count("article", "chapter"), "articles & chapters"],
   [count("preprint"), "preprints"],
@@ -13,73 +42,132 @@ const tally = [
   [count("poster"), "posters"],
   [count("talk"), "talks"],
 ].filter(([n]) => (n as number) > 0);
+
+const span = (start: string, end?: string) => years(end ? `${start} – ${end}` : start);
 ---
-<Base title="CV" description="Curriculum vitae — download the full record as a PDF.">
-  <section class="page-head">
-    <div class="divider">
-      <span class="eyebrow">CV</span>
-      <h1 class="divider__title">Curriculum vitae</h1>
-      <p class="divider__subtitle">
-        The complete record: positions, publications, presentations,
-        honours, and service.
-      </p>
+<Base
+  title="CV"
+  description="Curriculum vitae of Sofía Fernández Lozano: positions, education, teaching, and honours, with the full record as a PDF."
+>
+  <PageHeader title="CV" lede="Positions, education, teaching, and honours. The PDF is the complete record.">
+    <p class="cv-download-wrap">
+      <a class="cv-download" href="/cv.pdf" download>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path>
+        </svg>
+        Download PDF
+      </a>
+      <span class="cv-download__meta">Updated {profile.updated}</span>
+    </p>
+  </PageHeader>
+
+  <div class="doc">
+    <h2 class="doc__label">Positions</h2>
+    <div class="doc__body">
+      {positions.map((group) => (
+        <section class="subgroup">
+          <h3 class="subgroup__label">{group.label}</h3>
+          {group.items.map((e) => (
+            <div class="item item--range">
+              <span class="item__year">{span(e.data.dateStart, e.data.dateEnd)}</span>
+              <div class="item__body">
+                <span class="item__title">{e.data.role}</span>
+                <span class="item__meta">{e.data.org} · {e.data.location}</span>
+                <ul>{e.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
+              </div>
+            </div>
+          ))}
+        </section>
+      ))}
     </div>
-  </section>
 
-  <p class="cv-download-wrap">
-    <a class="cv-download" href="/cv.pdf" download>
-      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-           stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-        <path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path>
-      </svg>
-      Download PDF
-    </a>
-    <span class="cv-download__meta">updated {profile.updated}</span>
-  </p>
+    <h2 class="doc__label">Education</h2>
+    <div class="doc__body">
+      {education.map((e) => (
+        <div class="item item--range">
+          <span class="item__year">{years(e.data.year)}</span>
+          <div class="item__body">
+            <span class="item__title">{e.data.degree}{e.data.honours && ` — ${e.data.honours}`}</span>
+            <span class="item__meta">{e.data.institution} · {e.data.location}</span>
+            <ul>{e.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
+          </div>
+        </div>
+      ))}
+    </div>
 
-  <p class="cv-tally">
-    {tally.map(([n, label], i) => (
-      <>{i > 0 && " · "}{`${n} ${label}`}</>
-    ))}
-  </p>
+    <h2 class="doc__label">Publications</h2>
+    <div class="doc__body">
+      <p class="cv-tally">
+        {tally.map(([n, label], i) => <>{i > 0 && " · "}{`${n} ${label}`}</>)}
+      </p>
+      <p class="more"><a href="/publications">All publications →</a></p>
+    </div>
 
-  <footer class="footer">
-    Questions? <a href={`mailto:${profile.info.email}`}>{profile.info.email}</a>
-  </footer>
+    <h2 class="doc__label">Teaching &amp; service</h2>
+    <div class="doc__body">
+      {teaching.map((t) => (
+        <div class="item item--range">
+          <span class="item__year">{years(t.data.period)}</span>
+          <div class="item__body">
+            <span class="item__title">{t.data.title}</span>
+            {(t.data.org || t.data.location) && (
+              <span class="item__meta">{[t.data.org, t.data.location].filter(Boolean).join(" · ")}</span>
+            )}
+            <ul>{t.data.bullets.map((b) => <li set:html={md(b)}></li>)}</ul>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <h2 class="doc__label">Honours</h2>
+    <div class="doc__body">
+      {honourGroups.map((group) => (
+        <section class="subgroup">
+          <h3 class="subgroup__label">{group.label}</h3>
+          {group.items.map((h) => (
+            <div class="item item--range item--compact">
+              <span class="item__year">{years(h.data.year)}</span>
+              <div class="item__body">
+                <span class="item__title">{h.data.title}</span>
+                <span class="item__meta">{[h.data.amount, h.data.location].filter(Boolean).join(" · ")}</span>
+              </div>
+            </div>
+          ))}
+        </section>
+      ))}
+    </div>
+
+    <h2 class="doc__label">Software</h2>
+    <div class="doc__body">
+      <p class="cv-line">Qrater, the HVR pipeline, and hackathon contributions.</p>
+      <p class="more"><a href="/software">Software →</a></p>
+    </div>
+  </div>
 </Base>
 
 <style>
-  .page-head { margin-bottom: var(--space-6); }
   .cv-download-wrap {
     display: flex;
     align-items: center;
-    gap: var(--space-4);
+    gap: var(--space-2) var(--space-4);
     flex-wrap: wrap;
-    margin: 0 0 var(--space-4) 0;
+    margin: var(--space-4) 0 0 0;
   }
-  .cv-download {
+  .cv-download,
+  .cv-download:visited {
     display: inline-flex;
     align-items: center;
     gap: 0.55em;
-    padding: 0.7em 1.3em;
+    padding: 0.65em 1.2em;
     border: 1px solid var(--color-accent);
     color: var(--color-accent);
     text-decoration: none;
     font-weight: var(--weight-semibold);
     transition: background-color 140ms var(--ease-out), color 140ms var(--ease-out);
   }
-  .cv-download:visited { color: var(--color-accent); }
   .cv-download:hover { background: var(--color-accent); color: var(--color-bg); }
   .cv-download svg { display: block; }
-  .cv-download__meta {
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-    letter-spacing: var(--tracking-citation);
-    text-transform: uppercase;
-  }
-  .cv-tally {
-    margin: 0 0 var(--space-8) 0;
-    font-size: var(--text-sm);
-    color: var(--color-muted);
-  }
+  .cv-download__meta { font-size: var(--text-sm); color: var(--color-muted); }
+  .cv-tally, .cv-line { margin: 0; }
 </style>

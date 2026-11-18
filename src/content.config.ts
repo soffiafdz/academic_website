@@ -8,6 +8,16 @@ const publications = defineCollection({
     type: z.enum(['article', 'chapter', 'preprint', 'conference', 'poster', 'talk']),
     title: z.string(),
     englishTitle: z.string().optional(),
+    // BCP 47 tag when the title is not in English (screen readers, hyphenation).
+    lang: z.string().optional(),
+    venueLang: z.string().optional(),
+    // Conference abstracts: the meeting, kept apart from the journal volume.
+    meeting: z.string().optional(),
+    // Book chapters.
+    editors: z.string().optional(),
+    publisher: z.string().optional(),
+    // Shown under "Selected publications" on the home page.
+    featured: z.boolean().optional(),
     authors: z.string().optional(),
     talkType: z.string().optional(),
     venue: z.string(),

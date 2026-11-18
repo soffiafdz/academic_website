@@ -1,0 +1,62 @@
+---
+import type { CollectionEntry } from "astro:content";
+
+interface Props {
+  pub: CollectionEntry<"publications">;
+  // The home page's short list leaves the DOI to the linked title.
+  showDoi?: boolean;
+}
+
+const { pub, showDoi = true } = Astro.props;
+const d = pub.data;
+const href = d.doi ? `https://doi.org/${d.doi}` : d.url;
+
+const esc = (s: string) =>
+  s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+const em = (s: string, lang?: string) =>
+  `<em${lang ? ` lang="${lang}"` : ""}>${esc(s)}</em>`;
+
+// Her own name stands out of the muted author list, as on the printed CV.
+const SELF = "Fernandez-Lozano, S.";
+const authors = d.authors
+  ? esc(d.authors).split(SELF).join(`<span class="self">${SELF}</span>`)
+  : undefined;
+
+const journal = d.venue ? em(d.venue, d.venueLang) + (d.venueDetail ? ` ${esc(d.venueDetail)}` : "") : undefined;
+const place = (...parts: (string | undefined)[]) => parts.filter(Boolean).map((p) => esc(p!)).join(", ");
+const doi = d.doi && showDoi ? `doi:${esc(d.doi)}` : undefined;
+
+let segments: (string | undefined)[];
+switch (d.type) {
+  case "talk":
+    segments = [d.talkType && esc(d.talkType), esc(d.venue), d.location && esc(d.location)];
+    break;
+  case "poster":
+    segments = [esc(d.venue), d.location && esc(d.location)];
+    break;
+  case "chapter":
+    segments = [
+      authors,
+      `In ${d.editors ? `${esc(d.editors)} (Eds.), ` : ""}${em(d.venue, d.venueLang)}`,
+      d.publisher ? `${d.location ? `${esc(d.location)}: ` : ""}${esc(d.publisher)}` : undefined,
+    ];
+    break;
+  case "conference":
+    segments = [authors, journal, place(d.meeting, d.location) || undefined, doi];
+    break;
+  default: // article, preprint
+    segments = [authors, journal, d.notes && esc(d.notes), doi];
+}
+const meta = segments.filter(Boolean).join(" · ");
+const period = /[.?!]$/.test(d.title) ? "" : ".";
+---
+<div class="item">
+  <span class="item__year">{d.year}</span>
+  <div class="item__body">
+    <span class="item__title">
+      <span lang={d.lang}>{href ? <a class="item__link" href={href}>{d.title}</a> : d.title}</span>{period}
+      {d.englishTitle && <span class="item__translation"> ({d.englishTitle})</span>}
+    </span>
+    <span class="item__meta" set:html={meta} />
+  </div>
+</div>

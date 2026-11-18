@@ -14,7 +14,7 @@ export const profile = {
   ],
   description:
     "Sofía Fernández Lozano is a postdoctoral fellow at StoP-AD, Douglas Research Centre, in Montréal, working on MRI biomarkers of neurodegeneration and cardiovascular risk in preclinical Alzheimer's disease.",
-  updated: 'September 2026',
+  updated: 'October 2026',
   info: {
     email: 'sofia.fdzl@pm.me',
     phone: '+1 (438) 506-2094',
